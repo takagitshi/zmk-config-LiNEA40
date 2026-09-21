@@ -1,5 +1,15 @@
+name: Build LiNEA40 firmware
+
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify source contracts and gesture state machine
+        run: make verify
+
   build:
-    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@v0.2.1
+    needs: verify
+    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@v0.3.0

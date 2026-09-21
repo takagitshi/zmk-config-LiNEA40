@@ -1,4 +1,17 @@
 #include "LiNEA40.dtsi"
+#include <input/processors.dtsi>
+#include <dt-bindings/zmk/input_transform.h>
+
+/* Reuse ZMK's single temp-layer processor for Auto Mouse Layer. */
+&zip_temp_layer {
+    require-prior-idle-ms = <300>;
+    excluded-positions = <16 17 18 20 31 32>;
+};
+
+&gesture_processor {
+    status = "okay";
+};
+
 &default_transform {
     col-offset = <6>;
 };
@@ -57,14 +70,32 @@
         reg = <0>;
         spi-max-frequency = <2000000>;
         irq-gpios = <&xiao_d 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>; //MOT-D6
-        automouse-layer = <1>;
-        snipe-layers = <2>;
-        scroll-layers = <5>;
-        //scroll-layers = <4 5 6>;
+        /* LiNEA40-specific 400 CPI precision mode; policy layers remain in
+         * Input Processors for AML, Scroll, and Gesture.
+         */
+        snipe-layers = <8>;
     };
 };
 
 &trackball_listener {
     status = "okay";
     device = <&trackball>;
+
+    input-processors =
+        <&gesture_processor>,
+        <&zip_temp_layer 1 10000>;
+
+    scroller {
+        layers = <2>;
+        input-processors =
+            <&zip_xy_transform INPUT_TRANSFORM_Y_INVERT>,
+            <&zip_xy_to_scroll_mapper>,
+            <&scroll_scaler 1 40>;
+        process-next;
+    };
+};
+
+/* Mouse-button activity refreshes AML while pointer motion owns activation. */
+&mkp_input_listener {
+    input-processors = <&zip_temp_layer 1 10000>;
 };

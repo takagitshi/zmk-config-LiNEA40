@@ -1,4 +1,6 @@
+#include <behaviors.dtsi>
 #include <dt-bindings/zmk/matrix_transform.h>
+#include <zephyr/dt-bindings/input/input-event-codes.h>
 #include <physical_layouts.dtsi>
 
 / {
@@ -97,5 +99,29 @@
     trackball_listener: trackball_listener {
         compatible = "zmk,input-listener";
         status = "disabled";
+    };
+
+    scroll_scaler: scroll_scaler {
+        compatible = "zmk,input-processor-scaler";
+        #input-processor-cells = <2>;
+        type = <INPUT_EV_REL>;
+        codes = <INPUT_REL_WHEEL INPUT_REL_HWHEEL>;
+        track-remainders;
+    };
+
+    gesture_processor: gesture_processor {
+        compatible = "zmk,input-processor-gesture";
+        #input-processor-cells = <0>;
+        status = "disabled";
+        layer = <3>;
+        binding-layer = <3>;
+        /* Layer 3 slots: I = up, J = left, L = right, comma = down. */
+        up-position = <7>;
+        left-position = <16>;
+        right-position = <18>;
+        down-position = <27>;
+        threshold = <40>;
+        cooldown-ms = <150>;
+        reset-on-layer = <2>;
     };
 };

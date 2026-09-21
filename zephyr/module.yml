@@ -1,0 +1,7 @@
+name: zmk-config-LiNEA40
+build:
+  cmake: .
+  kconfig: Kconfig
+  settings:
+    board_root: .
+    dts_root: .
