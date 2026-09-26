@@ -4,3 +4,11 @@ config ZMK_INPUT_PROCESSOR_GESTURE
     depends on DT_HAS_ZMK_INPUT_PROCESSOR_GESTURE_ENABLED
     help
       Enable the layer-aware pointing gesture input processor.
+
+config LINEA40_CUSTOM_GESTURE2_MIGRATION
+    bool "Migrate saved Studio keymap to the Gesture 2 layout"
+    depends on SETTINGS
+    help
+      Once per device, remove only saved Studio keymap layer order, names,
+      and bindings so the new 10-layer source layout becomes active. Bluetooth
+      bonds and all unrelated settings are preserved.

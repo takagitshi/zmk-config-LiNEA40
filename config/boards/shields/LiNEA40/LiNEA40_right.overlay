@@ -5,10 +5,14 @@
 /* Reuse ZMK's single temp-layer processor for Auto Mouse Layer. */
 &zip_temp_layer {
     require-prior-idle-ms = <300>;
-    excluded-positions = <16 17 18 20 31 32>;
+    excluded-positions = <16 17 18 19 20 31 32>;
 };
 
 &gesture_processor {
+    status = "okay";
+};
+
+&gesture_2_processor {
     status = "okay";
 };
 
@@ -73,7 +77,7 @@
         /* LiNEA40-specific 400 CPI precision mode; policy layers remain in
          * Input Processors for AML, Scroll, and Gesture.
          */
-        snipe-layers = <8>;
+        snipe-layers = <9>;
     };
 };
 
@@ -82,6 +86,7 @@
     device = <&trackball>;
 
     input-processors =
+        <&gesture_2_processor>,
         <&gesture_processor>,
         <&zip_temp_layer 1 10000>;
 

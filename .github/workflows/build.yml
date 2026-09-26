@@ -3,13 +3,116 @@ name: Build LiNEA40 firmware
 on: [push, pull_request, workflow_dispatch]
 
 jobs:
-  verify:
-    runs-on: ubuntu-latest
+  source-tests:
+    runs-on: ubuntu-22.04
+    name: Verify editable source contracts
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Synchronize AML exclusions from Mouse layer
+        run: python3 scripts/sync-aml-exclusions.py
       - name: Verify source contracts and gesture state machine
         run: make verify
+      - name: Check scripts and whitespace
+        run: |
+          python3 -m py_compile scripts/*.py
+          git diff --check
+
+  matrix:
+    runs-on: ubuntu-22.04
+    name: Fetch build matrix
+    outputs:
+      build_matrix: ${{ env.build_matrix }}
+      has_valid_build_matrix: ${{ steps.fetch.outputs.has_valid_build_matrix }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Fetch build matrix
+        id: fetch
+        run: |
+          matrix_content=$(yq -oj -I0 'build.yaml')
+          if [ -z "$matrix_content" ] || [ "$matrix_content" = "null" ]; then
+            echo "has_valid_build_matrix=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "build_matrix=$matrix_content" >> "$GITHUB_ENV"
+            echo "has_valid_build_matrix=true" >> "$GITHUB_OUTPUT"
+            echo "$matrix_content"
+          fi
 
   build:
-    needs: verify
-    uses: zmkfirmware/zmk/.github/workflows/build-user-config.yml@v0.3.0
+    runs-on: ubuntu-latest
+    if: needs.matrix.outputs.has_valid_build_matrix == 'true'
+    container:
+      image: zmkfirmware/zmk-build-arm:3.5
+    needs: [matrix, source-tests]
+    name: Build
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJSON(needs.matrix.outputs.build_matrix) }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+
+      - name: Prepare environment
+        run: |
+          echo "ZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}" >> "$GITHUB_ENV"
+
+      - name: Synchronize AML exclusions from Mouse layer
+        run: python3 scripts/sync-aml-exclusions.py
+
+      - name: Initialize workspace
+        run: west init -l config
+
+      - name: Update pinned modules
+        run: west update --fetch-opt=--filter=tree:0
+
+      - name: Export Zephyr CMake package
+        run: west zephyr-export
+
+      - name: Build ${{ matrix.artifact-name }}
+        shell: sh -x {0}
+        run: |
+          west build \
+            -p always \
+            -s zmk/app \
+            -d build \
+            -b "${{ matrix.board }}" \
+            ${{ matrix.snippet && format('-S "{0}"', matrix.snippet) || '' }} \
+            -- \
+            -DZMK_CONFIG="${GITHUB_WORKSPACE}/config" \
+            ${{ matrix.shield && format('-DSHIELD="{0}"', matrix.shield) || '' }} \
+            -DZMK_EXTRA_MODULES="${ZMK_EXTRA_MODULES}" \
+            ${{ matrix.cmake-args || '' }}
+
+      - name: Verify generated Devicetree and Kconfig
+        run: >-
+          python3 scripts/verify-built-firmware.py
+          "${{ matrix.artifact-name }}"
+          build/zephyr/zephyr.dts
+          build/zephyr/.config
+
+      - name: Rename firmware
+        shell: sh -x {0}
+        run: |
+          mkdir -p build/artifacts
+          artifact_name=$(echo "${{ matrix.artifact-name }}" | tr '/' '-' | tr ' ' '_')
+          cp build/zephyr/zmk.uf2 "build/artifacts/${artifact_name}.uf2"
+
+      - name: Archive ${{ matrix.artifact-name }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: artifact-${{ matrix.artifact-name }}
+          path: build/artifacts
+
+  merge:
+    runs-on: ubuntu-latest
+    if: needs.matrix.outputs.has_valid_build_matrix == 'true'
+    needs: build
+    name: Merge output artifacts
+    steps:
+      - name: Merge artifacts
+        uses: actions/upload-artifact/merge@v4
+        with:
+          name: firmware
+          pattern: artifact-*
+          delete-merged: true

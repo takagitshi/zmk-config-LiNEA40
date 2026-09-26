@@ -124,4 +124,20 @@
         cooldown-ms = <150>;
         reset-on-layer = <2>;
     };
+
+    gesture_2_processor: gesture_2_processor {
+        compatible = "zmk,input-processor-gesture";
+        #input-processor-cells = <0>;
+        status = "disabled";
+        layer = <4>;
+        binding-layer = <4>;
+        /* Layer 4 slots: I = up, J = left, L = right, comma = down. */
+        up-position = <7>;
+        left-position = <16>;
+        right-position = <18>;
+        down-position = <27>;
+        threshold = <40>;
+        cooldown-ms = <150>;
+        reset-on-layer = <2>;
+    };
 };
