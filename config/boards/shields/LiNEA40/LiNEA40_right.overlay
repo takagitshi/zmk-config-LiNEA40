@@ -1,6 +1,7 @@
 #include "LiNEA40.dtsi"
 #include <input/processors.dtsi>
 #include <dt-bindings/zmk/input_transform.h>
+#include <zephyr/dt-bindings/input/input-event-codes.h>
 
 /* Reuse ZMK's single temp-layer processor for Auto Mouse Layer. */
 &zip_temp_layer {
@@ -74,10 +75,29 @@
         reg = <0>;
         spi-max-frequency = <2000000>;
         irq-gpios = <&xiao_d 6 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>; //MOT-D6
-        /* LiNEA40-specific 400 CPI precision mode; policy layers remain in
-         * Input Processors for AML, Scroll, and Gesture.
-         */
-        snipe-layers = <9>;
+        cpi = <800>;
+        evt-type = <INPUT_EV_REL>;
+        x-input-code = <INPUT_REL_X>;
+        y-input-code = <INPUT_REL_Y>;
+        invert-x;
+        invert-y;
+
+        /* Preserve LiNEA40's hardware 400-CPI Precision layer. */
+        snipe-mode;
+        snipe-cpi = <400>;
+        snipe-layer = <9>;
+
+        /* 14-mm LisM pre-19-mm curve, converted from 1000 to 800 CPI. */
+        pointer-acceleration;
+        pointer-acceleration-base-gain-milli = <1000>;
+        pointer-acceleration-takeoff-speed = <14>;
+        pointer-acceleration-full-speed = <68>;
+        pointer-acceleration-max-gain-milli = <3000>;
+        pointer-acceleration-reference-interval-ms = <8>;
+        pointer-acceleration-idle-reset-ms = <60>;
+        pointer-acceleration-scroll-layer = <2>;
+        pointer-acceleration-gesture-layer = <3>;
+        pointer-acceleration-gesture-layer-2 = <4>;
     };
 };
 

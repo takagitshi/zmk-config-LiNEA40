@@ -2,8 +2,8 @@ manifest:
   remotes:
     - name: zmkfirmware
       url-base: https://github.com/zmkfirmware
-    - name: inorichi
-      url-base: https://github.com/inorichi
+    - name: takagitshi
+      url-base: https://github.com/takagitshi
     - name: caksoylar
       url-base: https://github.com/caksoylar
   projects:
@@ -13,9 +13,9 @@ manifest:
       revision: edf5c0814fd3ea202e43aad2d68fd32e882a518c
       import: app/west.yml
     - name: zmk-pmw3610-driver
-      remote: inorichi
-      # Keep LiNEA40's proven PMW3610 driver until real-device migration testing.
-      revision: 1d9c2c68ca76012e1b1e5f6ef02fa5eadc4ca399
+      remote: takagitshi
+      # Lossless ZMK v0.3 motion path with LiNEA40's layer-9 snipe mode.
+      revision: c998b89626b5e08a1325dac1375e764c44494ae3
     - name: zmk-rgbled-widget
       remote: caksoylar
       # v0.3-compatible release.

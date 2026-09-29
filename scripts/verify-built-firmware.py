@@ -116,6 +116,9 @@ def main() -> None:
         require_config(config, "PMW3610")
         require_config(config, "PMW3610_SMART_ALGORITHM")
         require_config(config, "ZMK_INPUT_PROCESSOR_GESTURE")
+        require_config(config, "PMW3610_POINTER_ACCELERATION")
+        require_config(config, "PMW3610_REPORT_INTERVAL_MIN", "8")
+        require_config(config, "INPUT_THREAD_STACK_SIZE", "4096")
         require_config(config, "LINEA40_CUSTOM_GESTURE2_MIGRATION")
         require_config(config, "RGBLED_WIDGET_SHOW_LAYER_COLORS")
         for expected in ('compatible = "pixart,pmw3610";',):
@@ -160,13 +163,27 @@ def main() -> None:
         )
         if property_cells(trackball, "layers") != [2]:
             fail("generated scroll layer must remain Layer 2")
-        if property_cells(node_body(dts, "trackball"), "snipe-layers") != [9]:
-            fail("generated Precision layer must be Layer 9")
+        sensor = node_body(dts, "trackball")
+        expected_sensor_properties = {
+            "cpi": [800],
+            "snipe-cpi": [400],
+            "snipe-layer": [9],
+            "pointer-acceleration-base-gain-milli": [1000],
+            "pointer-acceleration-takeoff-speed": [14],
+            "pointer-acceleration-full-speed": [68],
+            "pointer-acceleration-max-gain-milli": [3000],
+            "pointer-acceleration-reference-interval-ms": [8],
+            "pointer-acceleration-idle-reset-ms": [60],
+            "pointer-acceleration-scroll-layer": [2],
+            "pointer-acceleration-gesture-layer": [3],
+            "pointer-acceleration-gesture-layer-2": [4],
+        }
+        for property_name, expected in expected_sensor_properties.items():
+            if property_cells(sensor, property_name) != expected:
+                fail(f"generated PMW3610 {property_name} must be {expected}")
         for layer_id, color in enumerate((0, 7, 2, 3, 5, 4, 2, 6, 1, 3)):
             require_config(config, f"RGBLED_WIDGET_LAYER_{layer_id}_COLOR", str(color))
         for symbol, value in (
-            ("PMW3610_CPI", "800"),
-            ("PMW3610_SNIPE_CPI", "400"),
             ("PMW3610_RUN_DOWNSHIFT_TIME_MS", "3264"),
             ("PMW3610_REST1_SAMPLE_TIME_MS", "40"),
             ("PMW3610_REST1_DOWNSHIFT_TIME_MS", "9600"),

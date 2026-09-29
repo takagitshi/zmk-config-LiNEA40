@@ -60,7 +60,7 @@ def main() -> None:
     west = read("config/west.yml")
     for pin in (
         "edf5c0814fd3ea202e43aad2d68fd32e882a518c",
-        "1d9c2c68ca76012e1b1e5f6ef02fa5eadc4ca399",
+        "c998b89626b5e08a1325dac1375e764c44494ae3",
         "8756cb7b8114069fa3c25c6f6c990f24988fceff",
     ):
         require(west, pin, "config/west.yml")
@@ -164,7 +164,18 @@ def main() -> None:
         "require-prior-idle-ms = <300>;",
         "&gesture_2_processor",
         "layers = <2>;",
-        "snipe-layers = <9>;",
+        "cpi = <800>;",
+        "snipe-mode;",
+        "snipe-cpi = <400>;",
+        "snipe-layer = <9>;",
+        "pointer-acceleration;",
+        "pointer-acceleration-base-gain-milli = <1000>;",
+        "pointer-acceleration-takeoff-speed = <14>;",
+        "pointer-acceleration-full-speed = <68>;",
+        "pointer-acceleration-max-gain-milli = <3000>;",
+        "pointer-acceleration-reference-interval-ms = <8>;",
+        "pointer-acceleration-idle-reset-ms = <60>;",
+        "pointer-acceleration-gesture-layer-2 = <4>;",
         "<&zip_xy_transform INPUT_TRANSFORM_Y_INVERT>",
         "<&zip_xy_to_scroll_mapper>",
         "<&scroll_scaler 1 40>;",
@@ -195,18 +206,26 @@ def main() -> None:
     right_conf = read("config/boards/shields/LiNEA40/LiNEA40_right.conf")
     for preserved in (
         "CONFIG_PMW3610_SMART_ALGORITHM=y",
-        "CONFIG_PMW3610_CPI=800",
-        "CONFIG_PMW3610_SNIPE_CPI=400",
-        "CONFIG_PMW3610_POLLING_RATE_125_SW=y",
+        "CONFIG_PMW3610_POINTER_ACCELERATION=y",
+        "CONFIG_PMW3610_REPORT_INTERVAL_MIN=8",
+        "CONFIG_INPUT_THREAD_STACK_SIZE=4096",
         "CONFIG_PMW3610_RUN_DOWNSHIFT_TIME_MS=3264",
         "CONFIG_PMW3610_REST1_SAMPLE_TIME_MS=40",
         "CONFIG_PMW3610_REST1_DOWNSHIFT_TIME_MS=9600",
-        "CONFIG_PMW3610_INVERT_X=y",
-        "CONFIG_PMW3610_INVERT_Y=y",
         "CONFIG_RGBLED_WIDGET_SHOW_LAYER_COLORS=y",
         "CONFIG_LINEA40_CUSTOM_GESTURE2_MIGRATION=y",
     ):
         require(right_conf, preserved, "LiNEA40_right.conf")
+    for obsolete in (
+        "CONFIG_PMW3610_CPI=",
+        "CONFIG_PMW3610_SNIPE_CPI=",
+        "CONFIG_PMW3610_POLLING_RATE_125_SW",
+        "CONFIG_PMW3610_AUTOMOUSE_TIMEOUT_MS",
+        "CONFIG_PMW3610_INVERT_X",
+        "CONFIG_PMW3610_INVERT_Y",
+    ):
+        if obsolete in right_conf:
+            fail(f"LiNEA40_right.conf: obsolete inorichi driver option {obsolete!r}")
     expected_colors = [0, 7, 2, 3, 5, 4, 2, 6, 1, 3]
     for layer_id, color in enumerate(expected_colors):
         require(

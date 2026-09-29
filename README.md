@@ -23,13 +23,17 @@ Personal LiNEA40 firmware for `takagitshi`. The hardware definition remains base
   magenta, blue, green, cyan, red, yellow. The left retains battery/status-only
   behavior.
 - Precision remains Layer 9 at 400 CPI and can be assigned from Keymap Editor.
+- The right PMW3610 reports losslessly at 8 ms, retries transient input/SPI
+  failures without blocking the input queue, and uses a 4096-byte input stack.
+- Normal pointer motion uses the pre-19-mm LisM 14-mm acceleration shape,
+  converted for LiNEA40's 800 CPI: 1.0x base, 14/68 speed thresholds, 3.0x max.
 - A one-time keymap-only migration lets the new source layout replace old Studio
   layer data without deleting Bluetooth bonds or unrelated settings.
 - ZMK and external modules are pinned to immutable commits.
 
-The default PMW3610 sensor driver is intentionally retained until the keyboard is
-available for physical A/B testing. Source checks, firmware builds, and Actions
-artifacts do not prove pointer feel, direction, sleep recovery, or battery life.
+The PMW3610 driver remains pinned to an immutable commit. Source checks, firmware
+builds, and Actions artifacts do not prove pointer feel, direction, sleep
+recovery, or battery life.
 
 ## Layer access
 
