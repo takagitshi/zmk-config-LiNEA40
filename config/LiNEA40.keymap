@@ -81,7 +81,7 @@
 &kp Q         &kp W         &kp E             &kp R  &kp T                                         &kp Y               &kp U  &lt 3 I            &kp O       &kp P
 &kp A         &kp S         &kp D             &kp F  &kp G                                         &kp H               &kp J  &lt 2 K            &kt L       &kp MINUS
 &mt LSHIFT Z  &kp X         &kp C             &kp V  &kp B                                         &kp N               &kp M  &lt 4 COMMA        &kp DOT     &mt RSHIFT QUESTION
-&kp TAB       &kp LEFT_ALT  &kp LEFT_COMMAND  &none  &lt 5 LANGUAGE_2  &lt 6 SPACE    &lt 7 ENTER  &mt LEFT_ALT LCTRL         &kp RIGHT_COMMAND  &kp DELETE  &kp BACKSPACE
+&kp ESCAPE    &kp LEFT_ALT  &kp LEFT_COMMAND  &none  &lt 5 LANGUAGE_2  &lt 6 SPACE    &lt 7 ENTER  &mt LEFT_ALT LCTRL         &kp RIGHT_COMMAND  &kp DELETE  &kp BACKSPACE
             >;
 
             sensor-bindings = <&inc_dec_kp C_VOLUME_UP C_VOLUME_DOWN>;
@@ -150,10 +150,10 @@
         layer_6 {
             display-name = "number";
             bindings = <
-&kp F1   &kp F2   &kp F3  &kp F4  &kp F5                         &kp NUMBER_7  &kp NUMBER_8  &kp NUMBER_9  &kp PLUS      &kp MINUS
-&kp F6   &kp F7   &kp F8  &kp F9  &kp F10                        &kp NUMBER_4  &kp NUMBER_5  &kp NUMBER_6  &kp ASTERISK  &kp SLASH
-&kp F11  &kp F12  &trans  &trans  &trans                         &kp N1        &kp N2        &kp N3        &kp COMMA     &kp EQUAL
-&trans   &trans   &trans  &trans  &trans   &trans    &kp PERIOD  &kp NUMBER_0                &trans        &kp COLON     &kp LA(Y)
+&kp F1   &kp F2   &kp F3  &kp F4  &kp F5                     &kp PERIOD    &kp NUMBER_7  &kp NUMBER_8  &kp NUMBER_9  &kp PLUS
+&kp F6   &kp F7   &kp F8  &kp F9  &kp F10                    &kp COMMA     &kp NUMBER_4  &kp NUMBER_5  &kp NUMBER_6  &kp MINUS
+&kp F11  &kp F12  &trans  &trans  &trans                     &kp NUMBER_0  &kp NUMBER_1  &kp NUMBER_2  &kp NUMBER_3  &kp ASTERISK
+&trans   &trans   &trans  &trans  &trans   &trans    &trans  &kp EQUAL                   &kp COLON     &kp LA(Y)     &kp LA(SLASH)
             >;
 
             sensor-bindings = <&encoder_msc SCRL_DOWN SCRL_UP>;
@@ -162,10 +162,10 @@
         layer_7 {
             display-name = "move";
             bindings = <
-&trans  &kp LG(N0)              &kp LG(MINUS)      &kp LG(PLUS)             &trans                            &kp LG(T)      &kp LC(LS(TAB))     &kp UP_ARROW    &kp LC(TAB)          &kp LG(W)
-&trans  &kp K_MUTE              &kp C_VOLUME_DOWN  &kp C_VOLUME_UP          &trans                            &kp LC(A)      &kp LEFT_ARROW      &kp DOWN_ARROW  &kp RIGHT_ARROW      &kp LC(E)
-&trans  &kp LA(LC(LEFT_ARROW))  &kp LA(LC(F))      &kp LA(LC(RIGHT_ARROW))  &trans                            &kp HOME       &kp LG(LEFT_ARROW)  &kp LG(LA(P))   &kp LG(RIGHT_ARROW)  &kp END
-&trans  &trans                  &trans             &trans                   &kp LANGUAGE_2  &trans    &trans  &kp LG(LS(N))                      &trans          &kp LG(R)            &kp LG(LS(H))
+&trans  &kp LG(N0)              &kp LG(MINUS)      &kp LG(PLUS)             &trans                     &kp LG(C)  &kp LG(LA(C))       &kp UP_ARROW    &kp LG(V)            &kp LG(W)
+&trans  &kp K_MUTE              &kp C_VOLUME_DOWN  &kp C_VOLUME_UP          &trans                     &kp LC(A)  &kp LEFT_ARROW      &kp DOWN_ARROW  &kp RIGHT_ARROW      &kp LC(E)
+&trans  &kp LA(LC(LEFT_ARROW))  &kp LA(LC(F))      &kp LA(LC(RIGHT_ARROW))  &trans                     &kp HOME   &kp LG(LEFT_ARROW)  &kp LG(LA(P))   &kp LG(RIGHT_ARROW)  &kp END
+&trans  &trans                  &trans             &trans                   &trans  &kp TAB    &trans  &trans                         &trans          &kp LG(R)            &kp LG(LS(H))
             >;
 
             sensor-bindings = <&encoder_none>;
