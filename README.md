@@ -25,6 +25,9 @@ Personal LiNEA40 firmware for `takagitshi`. The hardware definition remains base
 - Precision remains Layer 9 at 400 CPI and can be assigned from Keymap Editor.
 - The right PMW3610 reports losslessly at 8 ms, retries transient input/SPI
   failures without blocking the input queue, and uses a 4096-byte input stack.
+- Sensor orientation matches the original LiNEA40 behavior: X is passed through,
+  Y is inverted, axes are not swapped, and standard relative X/Y input codes are
+  retained.
 - Normal pointer motion uses the pre-19-mm LisM 14-mm acceleration shape,
   converted for LiNEA40's 800 CPI: 1.0x base, 14/68 speed thresholds, 3.0x max.
 - A one-time keymap-only migration lets the new source layout replace old Studio

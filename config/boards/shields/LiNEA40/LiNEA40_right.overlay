@@ -79,7 +79,11 @@
         evt-type = <INPUT_EV_REL>;
         x-input-code = <INPUT_REL_X>;
         y-input-code = <INPUT_REL_Y>;
-        invert-x;
+
+        /*
+         * Original Orientation 0 plus X/Y inversion yielded x=raw_x, y=-raw_y.
+         * Express that effective LiNEA40 transform directly in the new driver.
+         */
         invert-y;
 
         /* Preserve LiNEA40's hardware 400-CPI Precision layer. */

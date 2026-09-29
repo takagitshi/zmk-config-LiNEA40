@@ -160,6 +160,20 @@ def main() -> None:
     )
     if listener_order is None:
         fail("right overlay: Gesture 2, Gesture 1, AML processor order changed")
+
+    sensor = node_body(overlay, "trackball")
+    for expected in (
+        "x-input-code = <INPUT_REL_X>;",
+        "y-input-code = <INPUT_REL_Y>;",
+        "invert-y;",
+    ):
+        require(sensor, expected, "LiNEA40_right.overlay trackball")
+    for forbidden in ("invert-x;", "swap-xy;"):
+        if forbidden in sensor:
+            fail(
+                f"LiNEA40_right.overlay: original effective orientation forbids {forbidden!r}"
+            )
+
     for expected in (
         "require-prior-idle-ms = <300>;",
         "&gesture_2_processor",

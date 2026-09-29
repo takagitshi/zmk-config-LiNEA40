@@ -166,6 +166,8 @@ def main() -> None:
         sensor = node_body(dts, "trackball")
         expected_sensor_properties = {
             "cpi": [800],
+            "x-input-code": [0],
+            "y-input-code": [1],
             "snipe-cpi": [400],
             "snipe-layer": [9],
             "pointer-acceleration-base-gain-milli": [1000],
@@ -181,6 +183,12 @@ def main() -> None:
         for property_name, expected in expected_sensor_properties.items():
             if property_cells(sensor, property_name) != expected:
                 fail(f"generated PMW3610 {property_name} must be {expected}")
+        require(sensor, "invert-y;", "zephyr.dts trackball")
+        for forbidden in ("invert-x;", "swap-xy;"):
+            if forbidden in sensor:
+                fail(
+                    f"generated PMW3610 must preserve original effective orientation: {forbidden}"
+                )
         for layer_id, color in enumerate((0, 7, 2, 3, 5, 4, 2, 6, 1, 3)):
             require_config(config, f"RGBLED_WIDGET_LAYER_{layer_id}_COLOR", str(color))
         for symbol, value in (
