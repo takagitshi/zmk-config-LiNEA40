@@ -2,11 +2,12 @@
 #include <input/processors.dtsi>
 #include <dt-bindings/zmk/input_transform.h>
 #include <zephyr/dt-bindings/input/input-event-codes.h>
+#include <aml-exclusions.h>
 
 /* Reuse ZMK's single temp-layer processor for Auto Mouse Layer. */
 &zip_temp_layer {
     require-prior-idle-ms = <300>;
-    excluded-positions = <16 17 18 19 20 31 32>;
+    excluded-positions = <AML_EXCLUDED_POSITIONS>;
 };
 
 &gesture_processor {

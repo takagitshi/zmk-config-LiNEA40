@@ -8,6 +8,8 @@ import re
 from pathlib import Path
 
 
+from aml_keymap import mouse_positions
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -70,14 +72,11 @@ def main() -> None:
     workflow = read(".github/workflows/build.yml")
     for expected in (
         "make verify",
-        "scripts/sync-aml-exclusions.py",
         "scripts/verify-built-firmware.py",
         "west build",
         "actions/upload-artifact/merge@v4",
     ):
         require(workflow, expected, ".github/workflows/build.yml")
-    if "build-user-config.yml" in workflow:
-        fail("workflow cannot synchronize AML inside the reusable build checkout")
 
     build = read("build.yaml")
     for artifact in (
@@ -132,24 +131,14 @@ def main() -> None:
                     f"Gesture layer {layer_id} position {position} must be an editable normal binding"
                 )
 
-    mouse_behaviors = binding_behaviors(layers[1])
-    configured_mouse_positions = [
-        index
-        for index, behavior in enumerate(mouse_behaviors)
-        if behavior not in {"trans", "none"}
-    ]
+    mouse_positions(keymap, key_count=41)
     overlay = read("config/boards/shields/LiNEA40/LiNEA40_right.overlay")
-    excluded = re.search(r"excluded-positions\s*=\s*<([^>]*)>;", overlay)
-    if excluded is None:
-        fail("right overlay: AML excluded-positions missing")
-    excluded_positions = [int(value) for value in excluded.group(1).split()]
-    if excluded_positions != configured_mouse_positions:
-        fail(
-            "right overlay: AML exclusions do not match Mouse layer actions: "
-            f"{excluded_positions} != {configured_mouse_positions}"
-        )
-    if 19 not in configured_mouse_positions:
-        fail("Mouse position 19 (right of MB2) must remain assigned")
+    require(overlay, "excluded-positions = <AML_EXCLUDED_POSITIONS>;", "right overlay")
+    require(overlay, "#include <aml-exclusions.h>", "right overlay")
+    require(read("zephyr/module.yml"), "module_ext_root: .", "Zephyr module")
+    hook = read("modules/modules.cmake")
+    for fragment in ("generate-aml-exclusions.py", "DTS_EXTRA_CPPFLAGS", "--key-count 41"):
+        require(hook, fragment, "AML generation hook")
 
     listener_order = re.search(
         r"&trackball_listener\s*\{.*?input-processors\s*=\s*"
@@ -288,7 +277,6 @@ def main() -> None:
         "CMakeLists.txt",
         "Kconfig",
         "zephyr/module.yml",
-        "scripts/sync-aml-exclusions.py",
         "scripts/verify-built-firmware.py",
         "src/gesture_state.c",
         "src/input_processor_gesture.c",

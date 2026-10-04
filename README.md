@@ -15,8 +15,10 @@ Personal LiNEA40 firmware for `takagitshi`. The hardware definition remains base
   bindings at I, J, L, and comma. Gesture 2 defaults are left =
   Control+Shift+Tab, right = Control+Tab, up = Command+T, and down =
   Command+Shift+N.
-- Mouse Layer position immediately right of MB2 is Right Command. AML exclusions
-  are regenerated from all active Mouse Layer bindings before every build.
+- AML exclusions are generated from the selected Mouse Layer bindings during
+  every GitHub Actions and local West configuration. Keymap Editor changes to
+  key positions need no manual synchronization. Generated headers stay in the
+  build directory and the edited keymap is preserved.
 - LiNEA40-specific right-central PMW3610, left EC11 encoder, RGB battery/status
   widget, split battery reporting, and right-side ZMK Studio are retained.
 - The right-central LED uses the layer palette: off, white, green, yellow,

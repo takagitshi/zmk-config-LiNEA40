@@ -9,8 +9,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v5
-      - name: Synchronize AML exclusions from Mouse layer
-        run: python3 scripts/sync-aml-exclusions.py
       - name: Verify source contracts and gesture state machine
         run: make verify
       - name: Check scripts and whitespace
@@ -57,8 +55,6 @@ jobs:
         run: |
           echo "ZMK_EXTRA_MODULES=${GITHUB_WORKSPACE}" >> "$GITHUB_ENV"
 
-      - name: Synchronize AML exclusions from Mouse layer
-        run: python3 scripts/sync-aml-exclusions.py
 
       - name: Initialize workspace
         run: west init -l config

@@ -8,6 +8,8 @@ import sys
 from pathlib import Path
 
 
+from aml_keymap import mouse_positions
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
@@ -63,24 +65,7 @@ def require_keymap(dts: str) -> None:
 
 def configured_mouse_positions() -> list[int]:
     keymap = (ROOT / "config/LiNEA40.keymap").read_text(encoding="utf-8")
-    layer = re.search(
-        r"^\s*layer_1\s*\{(?P<body>.*?)^\s*\};",
-        keymap,
-        re.MULTILINE | re.DOTALL,
-    )
-    if layer is None:
-        fail("config/LiNEA40.keymap: missing Mouse layer")
-    bindings = re.search(r"bindings\s*=\s*<(?P<body>.*?)>;", layer.group("body"), re.DOTALL)
-    if bindings is None:
-        fail("config/LiNEA40.keymap: Mouse layer has no bindings")
-    behaviors = re.findall(r"&([A-Za-z0-9_]+)\b", bindings.group("body"))
-    if len(behaviors) != 41:
-        fail(f"Mouse layer must have 41 bindings, found {len(behaviors)}")
-    return [
-        position
-        for position, behavior in enumerate(behaviors)
-        if behavior not in {"trans", "none"}
-    ]
+    return mouse_positions(keymap, key_count=41) or [65535]
 
 
 def main() -> None:
